@@ -1,26 +1,14 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:3.8.1-adoptopenjdk-11' 
+            args '-v /root/.m2:/root/.m2' 
+        }
+    }
     stages {
-        stage('git repo & clean') {
+        stage('Build') { 
             steps {
-               bat "rmdir  /s /q TicketBookingServiceJunitTesting"
-                bat "git clone https://github.com/SHOAIBAHMED12842/TicketBookingServiceJunitTesting.git"
-                bat "mvn clean -f TicketBookingServiceJunitTesting"
-            }
-        }
-        stage('install') {
-            steps {
-                bat "mvn install -f TicketBookingServiceJunitTesting"
-            }
-        }
-        stage('test') {
-            steps {
-                bat "mvn test -f TicketBookingServiceJunitTesting"
-            }
-        }
-        stage('package') {
-            steps {
-                bat "mvn package -f TicketBookingServiceJunitTesting"
+                sh 'mvn -B -DskipTests clean package' 
             }
         }
     }
